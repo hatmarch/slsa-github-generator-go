@@ -5,6 +5,9 @@ on:
     tags:
       - "*"
 
+env:
+  UNTRUSTED_WORKING_DIR="./slsa-verifier"
+
 permissions: read-all
 
 jobs:
