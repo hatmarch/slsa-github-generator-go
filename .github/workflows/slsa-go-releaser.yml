@@ -6,7 +6,7 @@ on:
       - "*"
 
 env:
-  UNTRUSTED_WORKING_DIR="./slsa-verifier"
+  UNTRUSTED_WORKING_DIR: ./slsa-verifier
 
 permissions: read-all
 
