@@ -1,14 +1,25 @@
-# Used for e2e tests.
-#TODO: update with various config parameters.
 version: 1
+# List of env variables used during compilation.
 env:
   - GO111MODULE=on
   - CGO_ENABLED=0
 
+# Flags for the compiler.
 flags:
   - -trimpath
   - -tags=netgo
 
-goos: linux
-goarch: amd64
+goos: linux # same values as GOOS env variable.
+goarch: amd64 # same values as GOARCH env variable.
+
+# Entrypoint to compile. build the verifier for snake-eating-its-tail fun
+main: ./slsa-verifier/main.go
+
+# Binary name.
+# {{ .Os }} will be replaced by goos field in the config file.
+# {{ .Arch }} will be replaced by goarch field in the config file.
 binary: binary-{{ .Os }}-{{ .Arch }}
+
+# (Optional) ldflags generated dynamically in the workflow, and set as the `env` input variables in the workflow.
+ldflags:
+  - "{{ .Env.VERSION_LDFLAGS }}"
