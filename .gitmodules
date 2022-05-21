@@ -1,0 +1,4 @@
+[submodule "slsa-verifier"]
+	path = slsa-verifier
+	url = https://github.com/hatmarch/slsa-verifier.git
+	branch = main
