@@ -12,8 +12,10 @@ flags:
 goos: linux # same values as GOOS env variable.
 goarch: amd64 # same values as GOARCH env variable.
 
-# Entrypoint to compile. build the verifier for snake-eating-its-tail fun
-main: ./slsa-verifier/main.go
+# Entrypoint to compile. Default is the root directory.
+main: main.go
+
+dir: ./slsa-verifier
 
 # Binary name.
 # {{ .Os }} will be replaced by goos field in the config file.
