@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.3.4
         with:
           fetch-depth: 0
-          submoudules: true
+          submodules: true
       - id: ldflags
         run: |
           echo "::set-output name=value::$(./scripts/version-ldflags)"
