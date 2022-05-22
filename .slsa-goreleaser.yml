@@ -15,7 +15,8 @@ goarch: amd64 # same values as GOARCH env variable.
 # Entrypoint to compile. Default is the root directory.
 main: main.go
 
-dir: ../slsa-verifier
+# need to find a way to checkout submodules
+dir: ./slsa-verifier
 
 # Binary name.
 # {{ .Os }} will be replaced by goos field in the config file.
