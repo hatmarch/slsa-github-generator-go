@@ -1,0 +1,44 @@
+#-------------------------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
+#-------------------------------------------------------------------------------------------------------------
+
+# Run this with a command like:
+#
+# To be able to setup a code-server on a container with necessary tools to build 
+# this file and then run it in the project root with these parameters
+# CODE_SERVER_IMAGE_NAME=mhildema/container-build-code-server
+# docker build -t $CODE_SERVER_IMAGE_NAME -f Dockerfile-code-server .
+#
+# Run the container and map 8444 externally to the docker container
+# docker run -it -p 0.0.0.0:8444:8443 -v /var/run/docker.sock:/var/run/docker.sock \
+#    -v $HOME/.aws:/home/vscode/.aws -v $HOME/.gitconfig:/home/vscode/.gitconfig \
+#    -v ${PWD}:/project -e REPO_HOME=/project -e PASSWORD=password \
+#    $CODE_SERVER_IMAGE_NAME
+# 
+FROM mhildema/slsa-github-devcontainer:latest
+
+# Avoid warnings by switching to noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Or your actual UID, GID on Linux if not the default 1000
+# NOTE: USERNAME is a reserved variable in zsh and cannot be overridden by ARG value
+ARG USER_NAME="vscode"
+ARG USER_UID=1000
+ARG USER_GID="${USER_UID}"
+
+USER root
+
+RUN curl -fsSL https://code-server.dev/install.sh | sh
+
+USER vscode
+
+EXPOSE 8443
+
+RUN cd $HOME
+ENTRYPOINT /usr/bin/code-server --cert --bind-addr 0.0.0.0:8443
+
+# Switch back to dialog for any ad-hoc use of apt-get
+ENV DEBIAN_FRONTEND=
+
+
