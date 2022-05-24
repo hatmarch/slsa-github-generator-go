@@ -11,7 +11,11 @@
 # docker build -t $CODE_SERVER_IMAGE_NAME -f Dockerfile-code-server .
 #
 # Run the container and map 8444 externally to the docker container
-# docker run -it -p 0.0.0.0:8444:8443 -v /var/run/docker.sock:/var/run/docker.sock \
+# Also on linux systems, make sure the gid of the user matches the local 
+# system docker group id to get access to docker socket
+# docker run -it -u vscode:$(getent group docker | awk -F: '{printf $3}') \
+#    -p 0.0.0.0:8444:8443 \
+#    -v /var/run/docker.sock:/var/run/docker.sock \
 #    -v $HOME/.aws:/home/vscode/.aws -v $HOME/.gitconfig:/home/vscode/.gitconfig \
 #    -v ${PWD}:/project -e REPO_HOME=/project -e PASSWORD=password \
 #    $CODE_SERVER_IMAGE_NAME
@@ -32,6 +36,15 @@ USER root
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 USER vscode
+
+# install extensions
+RUN code-server --install-extension golang.Go \
+    && code-server --install-extension eamodio.gitlens \
+    && code-server --install-extension asciidoctor.asciidoctor-vscode \
+    && code-server --install-extension ms-azuretools.vscode-docker \
+    && code-server --install-extension yzhang.markdown-all-in-one \
+    && code-server --install-extension robole.markdown-snippets 
+
 
 EXPOSE 8443
 
