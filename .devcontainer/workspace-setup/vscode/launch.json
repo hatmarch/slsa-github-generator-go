@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Cosign (Sign)",
+            "name": "Launch Verifier",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/cosign",
-            "args": [ "sign", "--fulcio-url", "http://a4ba57f5ed46d4addb830d7f0f138bc4-153017217.ap-southeast-2.elb.amazonaws.com", 
-                "--rekor-url", "http://a489ca8eff72d4efdad8d392e5e50d62-1455921667.ap-southeast-2.elb.amazonaws.com", "-f", "${input:container}" 
+            "program": "${workspaceFolder}/slsa-verifier/main.go",
+            "args": [ 
+                "--artifact-path", "${input:artifact_path}",  "-provenance", "${input:provenance_path}", "-source", "github.com/hatmarch/slsa-github-generator-go" 
             ],
             "env": {
                 "COSIGN_EXPERIMENTAL": "1",
@@ -19,48 +19,19 @@
                 "SIGSTORE_CT_LOG_PUBLIC_KEY_FILE": "/tmp/ct-public.pem",
             }
         },
-        {
-            "name": "Launch Cosign (Init) NOT NEEDED",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}/cmd/cosign",
-            "args": [ "initialize" ],
-            "env": {
-                "COSIGN_EXPERIMENTAL": "1",
-                "SPIFFE_ENDPOINT_SOCKET": "/tmp/spire-stuff/api.sock",
-                //"SIGSTORE_ROOT_FILE": "/tmp/ca-root.pem",
-            }
-        },
-        {
-            "name": "Launch Cosign (Verify)",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}/cmd/cosign",
-            "args": [ "verify", "--rekor-url", "http://a489ca8eff72d4efdad8d392e5e50d62-1455921667.ap-southeast-2.elb.amazonaws.com", "${input:container}" ],
-            "env": {
-                "COSIGN_EXPERIMENTAL": "1",
-                //"SIGSTORE_ROOT_FILE": "/tmp/ca-root.pem",
-                "SIGSTORE_TRUST_REKOR_API_PUBLIC_KEY": "true"
-            }
-        },
-        {
-            "name": "Launch Spire Agent",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "/tmp/spire/cmd/spire-agent/main.go",
-//            "args": [ "run", "-config", "/tmp/spire/conf/agent/agent.conf", "-joinToken", "cd34974a-fbfe-4ca1-bdd4-a954cac9203d" ],
-            "args": [ "run", "-config", "/tmp/spire/conf/agent/agent.conf", "-joinToken", "f09e2b5e-5afe-4866-8ae7-73cda2757d16" ],
-        },
     ],
     "inputs": [
         {
-            "id": "container",
+            "id": "artifact_path",
             "type": "promptString",
-            "description": "name of the container to sign",
-            "default": "prod.auto.tfvars"
+            "description": "Path to the artifact",
+            "default": "/tmp/binary-linux-amd64"
+        },
+        {
+            "id": "provenance_path",
+            "type": "promptString",
+            "description": "Path to the provenance",
+            "default": "/tmp/binary-linux-amd64.intoto.jsonl"
         },
     ]
 }
